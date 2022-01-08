@@ -1,0 +1,1 @@
+export type Normalized<T> = T;
