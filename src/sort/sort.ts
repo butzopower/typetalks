@@ -20,7 +20,12 @@ type _SwapPositionWithNext<
   ;
 
 type BubbleSort<List extends number[]> = List extends [] ? [] : _BubbleSort<List, [], [], [unknown]>;
-type _BubbleSort<List extends number[], J extends unknown[], I extends unknown[], IPlusOne extends unknown[]> =
+type _BubbleSort<
+  List extends number[],
+  J extends unknown[],
+  I extends unknown[],
+  IPlusOne extends unknown[],
+> =
   IPlusOne['length'] extends List['length'] ?
     J['length'] extends List['length'] ?
       List :
