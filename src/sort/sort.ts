@@ -19,14 +19,14 @@ type _SwapPositionWithNext<
     : never
   ;
 
-type BubbleSort<List extends number[]> = List extends [] ? [] : _BubbleSort<List, List['length'], [], [unknown], []>;
-type _BubbleSort<List extends number[], N extends number, I extends unknown[], IPlusOne extends unknown[], J extends unknown[]> =
-  IPlusOne['length'] extends N ?
-    J['length'] extends N ? List :
-      _BubbleSort<List, N, [], [unknown], [...J, unknown]> :
+type BubbleSort<List extends number[]> = List extends [] ? [] : _BubbleSort<List, [], [unknown], []>;
+type _BubbleSort<List extends number[], I extends unknown[], IPlusOne extends unknown[], J extends unknown[]> =
+  IPlusOne['length'] extends List['length'] ?
+    J['length'] extends List['length'] ? List :
+      _BubbleSort<List, [], [unknown], [...J, unknown]> :
     GreaterThan<List[IPlusOne['length']], List[I['length']]> extends true ?
-      _BubbleSort<List, N, [...I, unknown], [...IPlusOne, unknown], J> :
-      _BubbleSort<SwapPositionWithNext<List, I['length']>, N, [...I, unknown], [...IPlusOne, unknown], J>
+      _BubbleSort<List, [...I, unknown], [...IPlusOne, unknown], J> :
+      _BubbleSort<SwapPositionWithNext<List, I['length']>, [...I, unknown], [...IPlusOne, unknown], J>
 ;
 
 // tests
