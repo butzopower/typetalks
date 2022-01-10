@@ -4,11 +4,13 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "test": "mocha --require ts-node/register --extensions ts 'src/**/*.spec.ts'"
+    "test": "mocha --require ts-node/register --extensions ts 'src/**/*.spec.ts'",
+    "present:server": "marp -s presentations"
   },
   "author": "",
   "license": "ISC",
   "devDependencies": {
+    "@marp-team/marp-cli": "^1.5.0",
     "@types/chai": "^4.3.0",
     "@types/mocha": "^9.0.0",
     "chai": "^4.3.4",
