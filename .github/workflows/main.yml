@@ -18,6 +18,9 @@ jobs:
       # Checks-out your repository under $GITHUB_WORKSPACE, so marp-action can access it
       - uses: actions/checkout@v2
 
+      - name: Make README the index.md to be root of pages
+        run: mv README.md index.md
+
       - name: Build & Deploy to GitHub Pages
         env:
           # You may wish to customize MARP_ARGS
