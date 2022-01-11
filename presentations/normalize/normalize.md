@@ -102,4 +102,16 @@ const heroicVillian: Alignment = 'left-right' // !! - 'left-right' is not assign
 
 ---
 
-## keyof
+## Property types
+
+A type's property can be accessed like an object to get that property's underlying type.
+
+```typescript
+type GeneralUKLocation = {
+  country: 'Wales' | 'Scotland' | 'Northern Ireland' | 'England'
+  distanceFromLondonInMiles: number
+  distanceFromLondonIfYouLeftAt: Date
+}
+
+let noOneKnowsReally: GeneralUKLocation['country'] = 'Wales'
+```
