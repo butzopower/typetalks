@@ -25,7 +25,7 @@ jobs:
           # For a multi-page site, try `MARP_ARGS: "-I slides/ --output dist/"`
           # Check examples for more: https://github.com/ralexander-phi/test-marp-action/blob/dev/README.md#example-sites
           # But to keep things simple, let's just convert a single README.md into index.html
-          MARP_ARGS: "-I presentations -o docs/"
+          MARP_ARGS: "-I . -o docs/"
 
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           GITHUB_REPOSITORY: ${{ github.repository }}
