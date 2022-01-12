@@ -16,7 +16,7 @@ We normally think of types as categorical.
 let someNumber: number = 123
 someNumber = 345
 
-someNumber = 'some-string' // fails to compile, string is not a number
+someNumber = 'some-string' // ⛔ fails to compile, string is not a number
 ```
 
 ---
@@ -30,7 +30,7 @@ let aSpecificNumber: 123 = 123
 aSpecificNumber = 456 // !! - 456 is not 123
 
 type UniversalPair = ['secret', 42]
-let truth: UniversalPair = ['s3cr3t', 42] // !! - 's3cr3t' is not 'secret'
+let truth: UniversalPair = ['s3cr3t', 42] // ⛔ 's3cr3t' is not 'secret'
 ```
 
 ---
@@ -40,10 +40,10 @@ let truth: UniversalPair = ['s3cr3t', 42] // !! - 's3cr3t' is not 'secret'
 This also happens when we make constants.
 
 ```typescript
-let aSpecificString = 'literally-this' as const // aSpecificString: 'literally-this'
-const anotherSpecificString = 'literally-that'  // anotherSpecificString: 'literally-that'
+let aSpecificString = 'literally-this' as const // ✅ aSpecificString: 'literally-this'
+const anotherSpecificString = 'literally-that'  // ✅ anotherSpecificString: 'literally-that'
 
-let someString = 'i-can-be-anything'            // someString: string
+let someString = 'i-can-be-anything'            // ✅ someString: string
 ```
 
 ---
@@ -54,7 +54,7 @@ TypeScript 4.1 added template literals allowing us to broaden this category of s
 
 ```typescript
 let someAbstractQuantity: `${string}ful` = 'mouthful'
-let invalidQuantity: `${string}ful` = 'mouth' // !! - mouth not assignable to ${string}ful
+let invalidQuantity: `${string}ful` = 'mouth' // ⛔ mouth not assignable to ${string}ful
 
 let ski: `ski${string}` = 'ski-ball'
 
@@ -74,7 +74,7 @@ type FulSuffix = `${string}ful`
 
 
 let valid: `${SkiPrefix}${FulSuffix}` = 'skillful'
-let invalid: `${SkiPrefix}${FulSuffix}` = 'skiful' // !! - skiful not assignable
+let invalid: `${SkiPrefix}${FulSuffix}` = 'skiful' // ⛔ skiful not assignable
                                                    // to `ski${string}${string}ful`
 
 ```
@@ -92,7 +92,7 @@ type HorizontalAlignment = "left" | "center" | "right"
 type Alignment = `${VerticalAlignment}-${HorizontalAlignment}`
 
 const chaoticNeutral: Alignment = 'bottom-center'
-const heroicVillian: Alignment = 'left-right' // !! - 'left-right' is not assignable to
+const heroicVillian: Alignment = 'left-right' // ⛔ 'left-right' is not assignable to
                                               // 'top-left'    | 'top-center'    | 'top-right'    |
                                               // 'middle-left' | 'middle-center' | 'middle-right' |
                                               // 'bottom-left' | 'bottom-center' | 'bottom-right'
@@ -104,14 +104,47 @@ const heroicVillian: Alignment = 'left-right' // !! - 'left-right' is not assign
 
 ## Property types
 
-A type's property can be accessed like an object to get that property's underlying type.
+A type's properties can be accessed like an object to get a specific property's underlying type.
 
 ```typescript
 type GeneralUKLocation = {
   country: 'Wales' | 'Scotland' | 'Northern Ireland' | 'England'
-  distanceFromLondonInMiles: number
-  distanceFromLondonIfYouLeftAt: Date
+  distanceFromLondon: number
+  dateFounded: Date
 }
 
 let noOneKnowsReally: GeneralUKLocation['country'] = 'Wales'
+
+// ⛔ string is not assignable to type number | Date
+let someKindOfUnion: GeneralUKLocation['distanceFromLondon' | 'dateFounded'] = 'France'
 ```
+
+---
+
+## keyof
+
+Similar to Object.keys we can also get a list of properties in a type using.
+
+```typescript
+type Color = {
+  name: string
+  red: number,
+  blue: number,
+  green: number
+  alpha: number
+}
+
+const greenAttr: keyof Color = 'green'
+const orangeAttr: keyof Color = 'orange' // ⛔ 'orange' not assignable to
+                                         //    'name' | 'red' | 'blue' | 'green' | 'alpha'
+```
+
+---
+
+## Generics
+
+We can use generics to make types out of types.
+
+---
+
+## Mapped types
