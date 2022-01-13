@@ -143,7 +143,27 @@ const orangeAttr: keyof Color = 'orange' // ⛔ 'orange' not assignable to
 
 ## Generics
 
-We can use generics to make types out of types.
+We can use generics to write code that doesn't care about all the types.
+
+```typescript
+type Greeter = { greet: () => string };
+
+function combineWithGreeter<T, U>(from: T, into: U): Greeter & T & U {
+  return Object.assign({greet: () => 'Hi there!'}, from, into);
+}
+
+const greetableFriend = combineWithGreeter({name: 'Bob'}, {job: 'Attorney'})
+console.log(`${greetableFriend.name} says: ${greetableFriend.greet()}`); // Bob says: Hi there!
+
+console.log(`${greetableFriend.lastName}`) // ⛔ Property 'lastName' does not exist on type
+                                           //    'Greeter & { name: string; } & { job: string; }'.
+```
+
+Note that `T` and `U` can be inferred, we do not have to call:
+
+```typescript
+combineWithGreeter<{ name: string }, { job: string }>({name: 'Bob'}, {job: 'Attorney'})
+```
 
 ---
 
