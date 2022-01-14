@@ -143,7 +143,7 @@ const orangeAttr: keyof Color = 'orange' // ⛔ 'orange' not assignable to
 
 ## Generics
 
-We can use generics to write code that doesn't care about all the types.
+We can use generics to write code that doesn't care about specific types.
 
 ```typescript
 type Greeter = { greet: () => string };
@@ -167,4 +167,64 @@ combineWithGreeter<{ name: string }, { job: string }>({name: 'Bob'}, {job: 'Atto
 
 ---
 
+## Exclusive Generics
+
+Our generic types don't have to be totally generic:
+
+```typescript
+function combineWithGreeter<T, U>(from: T, into: U): Greeter & T & U {
+  return Object.assign({greet: () => 'Hi there!'}, from, into);
+}
+
+combineWithGreeter('uh', 'what'); // ✅ compiles, ⚠️ but error at runtime
+                                  // Uncaught TypeError: Cannot assign to read only property '0' of object '[object String]'
+```
+
+We can use `extends` to limit the allowed types to a subset of types.
+
+```typescript
+function combineWithGreeter<T extends object, U extends object>(from: T, into: U): Greeter & T & U {
+  return Object.assign({greet: () => 'Hi there!'}, from, into);
+}
+
+combineWithGreeter('uh', 'what'); // ⛔ does not compile
+                                  // Argument of type 'string' is not assignable to parameter of type 'object'.
+```
+
+---
+
 ## Mapped types
+
+We can create types based on the properties of other types.
+
+```typescript
+type BallOfYarn<T extends object> = {
+  [Property in keyof T]: string
+}
+
+const person: {age: number, dob: Date} = {age: 52, dob: new Date()}
+
+const strungOut: BallOfYarn<typeof person> = {age: '174', dob: '08-11-1847'}
+```
+
+---
+
+## Mapped types (cont.)
+
+We can even remap the keys of a type using `as`
+
+```typescript
+type Contrarian<T extends object> = {
+  [Property in keyof T as `not_${Property & string}`]: T[Property]
+}
+
+type Person = {
+  age: number
+  name: string
+}
+
+const unPerson: Contrarian<Person> = {
+  not_name: 'Bob',
+  not_age: 1234
+}
+```
