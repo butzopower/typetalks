@@ -59,7 +59,7 @@ let invalidQuantity: `${string}ful` = 'mouth' // ⛔ mouth not assignable to ${s
 let ski: `ski${string}` = 'ski-ball'
 
 let numericalQuantity: `exactly-${number}-hens` = 'exactly-3-hens'
-let numericalQuantity: `exactly-${number}-hens` = 'exactly-2.89204-hens'
+let alsoNumericalQuantity: `exactly-${number}-hens` = 'exactly-2.89204-hens'
 ```
 
 ---
@@ -71,12 +71,12 @@ Template literals can also be combined inside template literals.
 ```typescript
 type SkiPrefix = `ski${string}`
 type FulSuffix = `${string}ful`
+```
 
-
+```typescript
 let valid: `${SkiPrefix}${FulSuffix}` = 'skillful'
 let invalid: `${SkiPrefix}${FulSuffix}` = 'skiful' // ⛔ skiful not assignable
                                                    // to `ski${string}${string}ful`
-
 ```
 
 ---
@@ -88,9 +88,10 @@ There's all kinds of neat things you can do with template literals.
 ```typescript
 type VerticalAlignment = "top" | "middle" | "bottom"
 type HorizontalAlignment = "left" | "center" | "right"
-
 type Alignment = `${VerticalAlignment}-${HorizontalAlignment}`
+```
 
+```typescript
 const chaoticNeutral: Alignment = 'bottom-center'
 const heroicVillian: Alignment = 'left-right' // ⛔ 'left-right' is not assignable to
                                               // 'top-left'    | 'top-center'    | 'top-right'    |
@@ -112,7 +113,9 @@ type GeneralUKLocation = {
   distanceFromLondon: number
   dateFounded: Date
 }
+```
 
+```typescript
 let noOneKnowsReally: GeneralUKLocation['country'] = 'Wales'
 
 // ⛔ string is not assignable to type number | Date
@@ -151,7 +154,9 @@ type Greeter = { greet: () => string };
 function combineWithGreeter<T, U>(from: T, into: U): Greeter & T & U {
   return Object.assign({greet: () => 'Hi there!'}, from, into);
 }
+```
 
+```typescript
 const greetableFriend = combineWithGreeter({name: 'Bob'}, {job: 'Attorney'})
 console.log(`${greetableFriend.name} says: ${greetableFriend.greet()}`); // Bob says: Hi there!
 
@@ -175,7 +180,9 @@ Our generic types don't have to be totally generic:
 function combineWithGreeter<T, U>(from: T, into: U): Greeter & T & U {
   return Object.assign({greet: () => 'Hi there!'}, from, into);
 }
+```
 
+```typescript
 combineWithGreeter('uh', 'what'); // ✅ compiles, ⚠️ but error at runtime
                                   // Uncaught TypeError: Cannot assign to read only property '0' of object '[object String]'
 ```
@@ -186,7 +193,9 @@ We can use `extends` to limit the allowed types to a subset of types.
 function combineWithGreeter<T extends object, U extends object>(from: T, into: U): Greeter & T & U {
   return Object.assign({greet: () => 'Hi there!'}, from, into);
 }
+```
 
+```typescript
 combineWithGreeter('uh', 'what'); // ⛔ does not compile
                                   // Argument of type 'string' is not assignable to parameter of type 'object'.
 ```
@@ -195,13 +204,16 @@ combineWithGreeter('uh', 'what'); // ⛔ does not compile
 
 ## Mapped types
 
-We can create types based on the properties of other types.
+We can create types based on the properties of other types using `[__ in keyof __]: __`
 
 ```typescript
+// turns all properties of T into strings
 type BallOfYarn<T extends object> = {
-  [Property in keyof T]: string
+  [P in keyof T]: string
 }
+```
 
+```typescript
 const person: {age: number, dob: Date} = {age: 52, dob: new Date()}
 
 const strungOut: BallOfYarn<typeof person> = {age: '174', dob: '08-11-1847'}
@@ -211,13 +223,15 @@ const strungOut: BallOfYarn<typeof person> = {age: '174', dob: '08-11-1847'}
 
 ## Mapped types (cont.)
 
-We can even remap the keys of a type using `as`
+We can even remap the names of keys of a type using `as` and template types
 
 ```typescript
 type Contrarian<T extends object> = {
   [Property in keyof T as `not_${Property & string}`]: T[Property]
 }
+```
 
+```typescript
 type Person = {
   age: number
   name: string
