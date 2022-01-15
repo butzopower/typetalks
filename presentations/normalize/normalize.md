@@ -202,6 +202,30 @@ combineWithGreeter('uh', 'what'); // ⛔ does not compile
 
 ---
 
+## Generic types
+
+Generics aren't limited to functions, we can use generics to create types as well.
+
+```typescript
+type Gemini<T> = [T, T]
+type GreekGod = 'Zeus' | 'Hera' | 'Poseidon' | 'Demeter' | 'Hades'
+```
+
+```typescript
+const twins: Gemini<string> = ['a', 'b']
+const pantheon: Gemini<Gemini<GreekGod>> = [['Zeus', 'Hera'], ['Hades', 'Zeus']]
+```
+
+We use generics a lot in the wild (sometimes as interfaces instead of raw types)
+
+```typescript
+const promiseMe: Promise<string> = Promise.resolve('forever and ever');
+const lostMap: Map<Location, Treasure> = new Map<Location, Treasure>()
+const someOf: Partial<{must: string, have: string}> = {} // ✅ compiles as 'must' and 'have' are now optional
+```
+
+---
+
 ## Mapped types
 
 We can create types based on the properties of other types using `[__ in keyof __]: __`
@@ -242,3 +266,15 @@ const unPerson: Contrarian<Person> = {
   not_age: 1234
 }
 ```
+
+---
+
+## Conditional types
+
+---
+
+## Conditional types (infer)
+
+---
+
+## Recursion
