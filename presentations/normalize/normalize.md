@@ -275,6 +275,56 @@ const unPerson: Contrarian<Person> = {
 
 ## Conditional types (infer)
 
+We can pull out parts of types that satisfy type conditions.
+
+```typescript
+type DropsLLC<T extends string> = T extends `${infer company}, LLC` ? company : T
+
+const pepsi: DropsLLC<'PepsiCo, LLC'> = 'PepsiCo'            // ✅ compiles
+const cocaColaLLC: DropsLLC<'Coca-Cola INC'> = 'Coca-Cola';  // ⛔ does not compile
+const cocaCola: DropsLLC<'Coca-Cola INC'> = 'Coca-Cola INC'; // ✅ compiles
+```
+
+We can do this with lists as well.
+
+```typescript
+type FirstItemExtracted<T extends unknown[]> =
+  T extends [infer first, ...infer rest] ?
+    {first, rest} :
+    {first: null, rest: []}
+                                                                      // T extends [infer first, ...infer rest]
+const numbers : FirstItemExtracted<[1,2,3]> = {first: 1, rest: [2,3]} // match
+const oneNumber : FirstItemExtracted<[1]> = {first: 1, rest: []}      // match
+const empty : FirstItemExtracted<[]> = {first: null, rest: []}        // did not match
+```
+
 ---
 
 ## Recursion
+
+---
+
+## Exercise
+
+Using all these tricks, let's write an API response normalizing function that provides super smart types.
+
+```json
+// API response
+{
+  "id": 123,
+  "person_id": 345,
+  "first_name": "Napolean",
+  "pets_first_name": "Marengo"
+}
+```
+
+```typescript
+normalize(apiResponse)
+
+{
+  id: 123,
+  personId: 345,
+  firstName: "Napolean",
+  petsFirstName: "Marengo"
+}
+```
