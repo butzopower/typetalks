@@ -27,7 +27,7 @@ But the category of our types can be very specific, so specific they represent a
 
 ```typescript
 let aSpecificNumber: 123 = 123
-aSpecificNumber = 456 // !! - 456 is not 123
+aSpecificNumber = 456 // ⛔ fails to compile - 456 is not 123
 
 type UniversalPair = ['secret', 42]
 let truth: UniversalPair = ['s3cr3t', 42] // ⛔ 's3cr3t' is not 'secret'
@@ -37,7 +37,7 @@ let truth: UniversalPair = ['s3cr3t', 42] // ⛔ 's3cr3t' is not 'secret'
 
 ## Literal types (const.)
 
-This also happens when we make constants.
+Often, defining constants sets the type of the constant as a literal type.
 
 ```typescript
 let aSpecificString = 'literally-this' as const // ✅ aSpecificString: 'literally-this'
@@ -50,7 +50,7 @@ let someString = 'i-can-be-anything'            // ✅ someString: string
 
 ## Template Literals
 
-TypeScript 4.1 added template literals allowing us to broaden this category of single thing.
+TypeScript 4.1 added template literals allowing us to widen literal types to allow partial matching.
 
 ```typescript
 let someAbstractQuantity: `${string}ful` = 'mouthful'
@@ -105,7 +105,7 @@ const heroicVillian: Alignment = 'left-right' // ⛔ 'left-right' is not assigna
 
 ## Property types
 
-A type's properties can be accessed like an object to get a specific property's underlying type.
+A type's properties can be accessed - like a normal TS object - to get a specific property's underlying type.
 
 ```typescript
 type GeneralUKLocation = {
@@ -117,16 +117,17 @@ type GeneralUKLocation = {
 
 ```typescript
 let noOneKnowsReally: GeneralUKLocation['country'] = 'Wales'
+let elseWhere: GeneralUKLocation['country'] = 'France' // ⛔ does not compile
 
 // ⛔ string is not assignable to type number | Date
-let someKindOfUnion: GeneralUKLocation['distanceFromLondon' | 'dateFounded'] = 'France'
+let someKindOfUnion: GeneralUKLocation['distanceFromLondon' | 'dateFounded'] = 'Scotland'
 ```
 
 ---
 
 ## keyof
 
-Similar to Object.keys we can also get a list of properties in a type using.
+Similar to `Object.keys(obj)` we can get a list of properties in a type.
 
 ```typescript
 type Color = {
