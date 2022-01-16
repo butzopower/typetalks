@@ -226,6 +226,100 @@ const someOf: Partial<{must: string, have: string}> = {} // ✅ compiles as 'mus
 
 ---
 
+## Conditional types
+
+We can create types that behave differently based on the inputted types.
+
+```typescript
+type MakeBobSpecial<T extends string> = T extends 'Bob' ? { name: 'Bob', money: 1_000_000_000 } : { name: T }
+```
+
+```typescript
+const harry: MakeBobSpecial<'Harry'> = { name: 'Harry' }
+const lilBob: MakeBobSpecial<'bob'> = { name: 'bob' }
+const bob: MakeBobSpecial<'Bob'> = { name: 'Bob', money: 1_000_000_000 };
+```
+
+```typescript
+type DisallowTriplets<T extends unknown[]> = T['length'] extends 3 ? never : T;
+```
+
+```typescript
+const arbitraryNumbers: DisallowTriplets<number[]> = [1,2]
+const threeOfThem: DisallowTriplets<[number, number, number]> = [1, 2, 3] // ⛔ does not compile
+                                                                          // [1,2,3] not assignable to never
+```
+
+---
+
+## Conditional types (infer)
+
+We can pull out parts of types that satisfy type conditions.
+
+```typescript
+type DropsLLC<T extends string> = T extends `${infer company}, LLC` ? company : T
+
+const pepsi: DropsLLC<'PepsiCo, LLC'> = 'PepsiCo'            // ✅ compiles
+const cocaColaLLC: DropsLLC<'Coca-Cola INC'> = 'Coca-Cola';  // ⛔ does not compile
+const cocaCola: DropsLLC<'Coca-Cola INC'> = 'Coca-Cola INC'; // ✅ compiles
+```
+
+We can do this with lists as well.
+
+```typescript
+type FirstItemExtracted<T extends unknown[]> =
+  T extends [infer first, ...infer rest] ?
+    {first, rest} :
+    {first: null, rest: []}
+                                                                      // T extends [infer first, ...infer rest]
+const numbers : FirstItemExtracted<[1,2,3]> = {first: 1, rest: [2,3]} // match
+const oneNumber : FirstItemExtracted<[1]> = {first: 1, rest: []}      // match
+const empty : FirstItemExtracted<[]> = {first: null, rest: []}        // did not match
+```
+
+---
+
+## Recursion
+
+We can make types that refer to themselves using recursion.
+
+```typescript
+type Tree<T> = T | { left: Tree<T>, right: Tree<T> }
+```
+
+```typescript
+const smallTree: Tree<string> = 'seed'
+const fork: Tree<string> = { left: 'knife', right: 'spoon' }
+const sortedTree: Tree<number> = {
+  left: { left: 1, right: 2 },
+  right: { left: { left: 3, right: 4}, right: 5 }
+}
+```
+
+---
+
+## Recursion (cont.)
+
+We can use recursion and conditional types to make programmable types.
+
+```typescript
+type Reverse<T extends unknown[]> =
+  T extends [infer next, ...infer rest] ?
+    [...Reverse<rest>, next] :
+    T;
+```
+
+```typescript
+const reversedList: Reverse<[3,2,1]> = [1,2,3];
+const reversedTypes: Reverse<[Date, number, string]> = ["Wow" , 456, new Date()];
+```
+
+```typescript
+const reversedTypedArray: Reverse<number[]> = [1,2,3]; // valid because we fail to T instead of []
+```
+
+---
+
 ## Mapped types
 
 We can create types based on the properties of other types using `[__ in keyof __]: __`
@@ -266,41 +360,6 @@ const unPerson: Contrarian<Person> = {
   not_age: 1234
 }
 ```
-
----
-
-## Conditional types
-
----
-
-## Conditional types (infer)
-
-We can pull out parts of types that satisfy type conditions.
-
-```typescript
-type DropsLLC<T extends string> = T extends `${infer company}, LLC` ? company : T
-
-const pepsi: DropsLLC<'PepsiCo, LLC'> = 'PepsiCo'            // ✅ compiles
-const cocaColaLLC: DropsLLC<'Coca-Cola INC'> = 'Coca-Cola';  // ⛔ does not compile
-const cocaCola: DropsLLC<'Coca-Cola INC'> = 'Coca-Cola INC'; // ✅ compiles
-```
-
-We can do this with lists as well.
-
-```typescript
-type FirstItemExtracted<T extends unknown[]> =
-  T extends [infer first, ...infer rest] ?
-    {first, rest} :
-    {first: null, rest: []}
-                                                                      // T extends [infer first, ...infer rest]
-const numbers : FirstItemExtracted<[1,2,3]> = {first: 1, rest: [2,3]} // match
-const oneNumber : FirstItemExtracted<[1]> = {first: 1, rest: []}      // match
-const empty : FirstItemExtracted<[]> = {first: null, rest: []}        // did not match
-```
-
----
-
-## Recursion
 
 ---
 
